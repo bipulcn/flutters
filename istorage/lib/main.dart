@@ -33,14 +33,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String sdta = "Button was not clicked";
   final LocalStorage _db = new LocalStorage('localstorage_app');
   void saveLoackStore() {
     _db.setItem('test', 'This is a test data saved in Local Storage');
   }
 
   void loadLoackStore() {
-    String tst = _db.getItem('test') ?? "Data Was not Saved";
-    log(tst);
+    setState(() {
+      sdta = _db.getItem('test') ?? "Data Was not Saved";
+      log(sdta);
+    });
   }
 
   void _incrementCounter() {
@@ -65,6 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              '$sdta',
+              style: Theme.of(context).textTheme.headline5,
             ),
             ElevatedButton(
                 onPressed: () => {saveLoackStore()},
