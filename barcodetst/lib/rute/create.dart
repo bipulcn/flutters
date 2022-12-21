@@ -11,6 +11,7 @@ class CreatePage extends StatefulWidget {
 
 class _CreatePageState extends State<CreatePage> {
   QrImage imgs = QrImage(data: "", version: QrVersions.auto, size: 200.0);
+  final txtControler = TextEditingController();
 
   void updateQrCode(String text) {
     setState(() {
@@ -32,49 +33,54 @@ class _CreatePageState extends State<CreatePage> {
           title: const Text("Create Barcode"),
         ),
         body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 40.0),
-                child: const Text("Create a QR Code",
-                    style: TextStyle(fontSize: 24.0)),
-              ),
-              Container(
-                child: Row(
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.all(0.0),
-                      child: Text('Enter a search term'),
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 40.0),
+                    child: const Text("Create a QR Code",
+                        style: TextStyle(fontSize: 24.0)),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: TextField(
+                        controller: txtControler,
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Enter a search term'),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        updateQrCode(txtControler.text);
+                      },
+                      child: const Text("Generate")),
+                  Container(color: Colors.white, child: imgs),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text("Create"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/',
+                          arguments: "This is first argument from first page");
+                    },
+                    child: const Text("Back"),
+                  ),
+                  // SvgPicture.string(buildBarcode(
+                  //   Barcode.code39(),
+                  //   'CODE 39',
+                  // ),
+                  // ),
+                ],
               ),
-              Container(color: Colors.white, child: imgs),
-              ElevatedButton(
-                onPressed: () {
-                  updateQrCode("Hello world");
-                },
-                child: const Text("Create"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/',
-                      arguments: "This is first argument from first page");
-                },
-                child: const Text("Back"),
-              ),
-              // SvgPicture.string(buildBarcode(
-              //   Barcode.code39(),
-              //   'CODE 39',
-              // ),
-              // ),
-            ],
-          ),
-        ),
+            )),
       ),
     );
   }

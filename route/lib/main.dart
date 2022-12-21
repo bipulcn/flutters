@@ -7,7 +7,7 @@ void main() {
     title: 'Name Routes Demo',
     initialRoute: '/',
     routes: {
-      '/': (context) => const FirsrstScreen(),
+      '/': (context) => FirsrstScreen(),
       '/second': (context) => const SecondScreen()
     },
   ));

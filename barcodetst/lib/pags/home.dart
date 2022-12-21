@@ -94,6 +94,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/',
                         arguments: "This is first argument from first page");
+                    // Navigator.pop(context);
                   },
                   child: const Text("Lauch Screen"),
                 ),
