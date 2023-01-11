@@ -50,7 +50,7 @@ class _InsertDataState extends State<InsertData> {
                 padding: EdgeInsets.all(10.0),
                 child: TextField(
                   controller: detal,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: "Inser your age.",
                     hintStyle: TextStyle(color: Colors.grey),
@@ -62,9 +62,9 @@ class _InsertDataState extends State<InsertData> {
                     onPressed: () async {
                       // Note not = new Note(
                       //     id: 1, title: name.text, description: detal.text);
-                      SqliteService.createItem(name.text, detal.text);
+                      await SqliteService().createItem(name.text, detal.text);
                     },
-                    child: Icon(Icons.save)),
+                    child: const Icon(Icons.save)),
               ),
             ],
           ),

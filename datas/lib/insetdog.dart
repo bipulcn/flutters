@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:datas/dbf/dog.dart';
 import 'package:datas/helper/datahelper.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +38,7 @@ class _AddDogScreenState extends State<AddDogScreen> {
               }),
             ),
             TextFormField(
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(hintText: "Add Dog Age"),
               onChanged: (value) {
                 setState(() {
@@ -62,6 +62,8 @@ class _AddDogScreenState extends State<AddDogScreen> {
                       id: Random().nextInt(50),
                     ),
                   );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Data saved success")));
                 }
               },
               child: const Text('Submit'),
@@ -71,4 +73,6 @@ class _AddDogScreenState extends State<AddDogScreen> {
       ),
     );
   }
+
+  // SnackBar sankbar = ;
 }

@@ -10,21 +10,42 @@ class ViewDatas extends StatefulWidget {
 }
 
 class _ViewDatasState extends State<ViewDatas> {
-  List<Note> Notes = [];
-  List<Note> NotesByName = [];
+  Future<List<Note>>? _notes;
+  late SqliteService handler;
 
-  void _queryAll() async {
-    final allRows = await SqliteService.getItems();
-    Notes.clear();
-    allRows.forEach((row) {
-      debugPrint(row.toString());
-      // row.map((key, value) {
-      //   debugPrint(value);
-      // });
+  @override
+  void initState() {
+    super.initState();
+    handler = SqliteService();
+    handler.initdb().whenComplete(() async {
+      setState(() {
+        _notes = getList();
+      });
     });
-    // _showMessageInScaffold('Query done.');
-    setState(() {});
   }
+
+  Future<List<Note>> getList() async {
+    return await handler.notes();
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      _notes = getList();
+    });
+  }
+
+  // void _queryAll() async {
+  //   final allRows = await SqliteService().getItems();
+  //   Notes.clear();
+  //   allRows.forEach((row) {
+  //     debugPrint(row.toString());
+  //     // row.map((key, value) {
+  //     //   debugPrint(value);
+  //     // });
+  //   });
+  //   // _showMessageInScaffold('Query done.');
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -32,22 +53,53 @@ class _ViewDatasState extends State<ViewDatas> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Scrollbar(child: userWidget()),
-              ElevatedButton(
-                  onPressed: () async {
-                    setState(() {
-                      _queryAll();
-                    });
-                    dynamic rw = await SqliteService.getItems();
-                    debugPrint(rw.toString());
-                  },
-                  child: Icon(Icons.download)),
-            ],
+          child: FutureBuilder<List<Note>>(
+            future: _notes,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Note>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                final items = snapshot.data ?? <Note>[];
+                return Scrollbar(
+                  child: RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Dismissible(
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerRight,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: const Icon(Icons.delete_forever),
+                          ),
+                          key: ValueKey<int>(items[index].id ?? 0),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (DismissDirection direction) async {
+                            await handler.delteNote(items[index].id ?? 0);
+                            setState(() {
+                              items.remove(items[index]);
+                            });
+                          },
+                          child: Card(
+                            child: ListTile(
+                              title: Text(items[index].title ?? ''),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ),
       ),
@@ -60,11 +112,12 @@ class _ViewDatasState extends State<ViewDatas> {
 
   Widget userWidget() {
     return FutureBuilder<List>(
-      future: SqliteService.getItems(),
+      future: SqliteService().notes(),
       // initialData: List(),
       builder: (context, snapshot) {
         return snapshot.hasData
             ? new ListView.builder(
+                shrinkWrap: true,
                 padding: const EdgeInsets.all(10.0),
                 itemCount: snapshot.data?.length,
                 itemBuilder: (context, i) {

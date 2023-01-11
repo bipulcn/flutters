@@ -44,6 +44,12 @@ class _ViewListPageState extends State<ViewListPage> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Item List"),
+          leading: BackButton(
+            onPressed: () => Navigator.pushNamed(context, "/"),
+          ),
+        ),
         body: FutureBuilder<List<Dog>>(
           future: _dogs,
           builder: (BuildContext context, AsyncSnapshot<List<Dog>> snapshot) {
@@ -63,28 +69,30 @@ class _ViewListPageState extends State<ViewListPage> {
                     itemCount: items.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Dismissible(
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            color: Colors.red,
-                            alignment: Alignment.centerRight,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: const Icon(Icons.delete_forever),
-                          ),
-                          key: ValueKey<int>(items[index].id),
-                          onDismissed: (DismissDirection direction) async {
-                            await handler.deleteDog(items[index].id);
-                            setState(() {
-                              items.remove(items[index]);
-                            });
-                          },
-                          child: Card(
-                            child: ListTile(
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: const Icon(Icons.delete_forever),
+                        ),
+                        key: ValueKey<int>(items[index].id),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (DismissDirection direction) async {
+                          await handler.deleteDog(items[index].id);
+                          setState(() {
+                            items.remove(items[index]);
+                          });
+                        },
+                        child: Card(
+                          child: ListTile(
                               contentPadding: const EdgeInsets.all(8.0),
                               title: Text(items[index].name),
                               subtitle: Text(items[index].age.toString()),
-                            ),
-                          ));
+                              onLongPress: () {
+                                debugPrint("hellow world");
+                              }),
+                        ),
+                      );
                     },
                   ),
                 ),

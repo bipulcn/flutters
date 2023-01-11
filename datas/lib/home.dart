@@ -82,6 +82,32 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.pushNamed(context, '/ndog');
                 },
                 child: const Text("New Dog")),
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Alert Dialog'),
+                      content: const Text("hello world"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              debugPrint("hello world");
+                              Navigator.pop(context);
+                            },
+                            child: const Text("cancle")),
+                        TextButton(
+                            onPressed: () {
+                              debugPrint("Action was executed");
+                              Navigator.of(context, rootNavigator: true)
+                                  .pop('dialog');
+                            },
+                            child: const Text("Yes"))
+                      ],
+                    ),
+                  );
+                },
+                child: const Text("Alert"))
           ],
         ),
       ),
