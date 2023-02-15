@@ -7,7 +7,7 @@ class DatabaseHandler {
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
 
-    return openDatabase(join(path, 'database.db'),
+    return openDatabase(join(path, 'databases.db'),
         onCreate: (database, version) async {
       await database.execute(
           "CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
